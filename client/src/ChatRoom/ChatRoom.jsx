@@ -3,6 +3,8 @@ import React from "react";
 import "./ChatRoom.css";
 import useChat from "../useChat";
 
+import { encryptAES, applyHash, checkHash, decryptAES } from "../utils/index";
+
 const ChatRoom = (props) => {
   const { roomId } = props.match.params;
   const { messages, sendMessage } = useChat(roomId);
@@ -13,7 +15,8 @@ const ChatRoom = (props) => {
   };
 
   const handleSendMessage = () => {
-    sendMessage(newMessage);
+    console.log(encryptAES(applyHash(newMessage) + newMessage));
+    sendMessage(encryptAES(applyHash(newMessage) + newMessage));
     setNewMessage("");
   };
 
@@ -29,7 +32,7 @@ const ChatRoom = (props) => {
                 message.ownedByCurrentUser ? "my-message" : "received-message"
               }`}
             >
-              {message.body}
+              {checkHash(decryptAES(message.body))}
             </li>
           ))}
         </ol>
